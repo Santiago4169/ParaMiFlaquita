@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Para Mi Novia</title>
+
   <style>
     * {
       margin: 0;
@@ -27,18 +28,13 @@
       background: black;
     }
 
-    /* Fondo como imagen de fondo con CSS */
     #contenedor-imagen::before {
       content: "";
       background-image: url('fondo.jpg');
       background-size: cover;
       background-position: center;
-      opacity: 1;
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      inset: 0;
       z-index: 0;
     }
 
@@ -46,7 +42,6 @@
       position: absolute;
       white-space: nowrap;
       font-size: 4vw;
-      max-font-size: 18px;
       color: gold;
       text-shadow: 1px 1px 3px black;
       transform: scale(0);
@@ -57,8 +52,8 @@
 
     .photo {
       position: absolute;
-      width: 60px;
-      height: 60px;
+      width: 65px;
+      height: 65px;
       border-radius: 15px;
       object-fit: cover;
       box-shadow: 0 0 8px white;
@@ -77,10 +72,7 @@
     #pantalla-inicial {
       position: fixed;
       z-index: 2000;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
+      inset: 0;
       max-width: 430px;
       margin: 0 auto;
       background: rgba(255, 192, 203, 0.95);
@@ -110,31 +102,21 @@
     }
 
     @media (min-width: 600px) {
-      .phrase {
-        font-size: 18px;
-      }
-
-      .photo {
-        width: 70px;
-        height: 70px;
-      }
+      .phrase { font-size: 18px; }
+      .photo { width: 75px; height: 75px; }
     }
   </style>
 </head>
+
 <body>
 
-  <!-- Pantalla inicial -->
   <div id="pantalla-inicial">
     <h1>¿Quién es mi flaquita hermosa? 🩷</h1>
     <button id="btn-yoo">¡Yooo!</button>
   </div>
 
-  <!-- Contenedor principal -->
-  <div id="contenedor-imagen">
-    <!-- Fondo aplicado vía CSS con ::before -->
-  </div>
+  <div id="contenedor-imagen"></div>
 
-  <!-- Música -->
   <audio id="musica" loop>
     <source src="cancion.mp3" type="audio/mpeg">
     Tu navegador no soporta audio.
@@ -142,37 +124,39 @@
 
   <script>
     const phrases = [
-      "Para ti mi Niña Hermosa🩷","Te Amo 🩷", "Mi Preciosa 😍😳", "Mi Flaca 🩷",
-      "Me Encantas Muchotee😍", "Mi Niña 🩷", "Amor de mi Vida 💘🥰", "Te Amo Muchoteeeeee🩷",
-      "Mi Princesita 😘😏", "Te Amoooooo🩷", "Gracias por ser mi Princesita 😊", "Mi Nenita😊🥰", "Mi Flaquita 🩷",
-      "Mi Blanquita😍🥰", "Mi Mundo🥺", "Gracias por Amarme🥰🥺", "Gracias por ser mi mujer🤭🥴", "Mi Reina🤗",
-      "Para ti mi Niña Hermosa 🩷", "awwwwwww🫠😊", "Te Amooo🩷😊", "Mi Diosa Humana🩷😳", "Mi Cachaquita🤭",
-      "Mi Enojona😳", "Te Amo🩷", "Tan Hermosa 🤭", "La mejor mujer del mundo🩷"
+      "Para ti mi Niña Hermosa🩷","Te Amo 🩷","Mi Preciosa 😍😳","Mi Flaca 🩷",
+      "Me Encantas Muchote 😍","Mi Niña 🩷","Amor de mi Vida 💘🥰","Te Amo Muchote 🩷",
+      "Mi Princesita 😘😏","Te Amoooooo🩷","Gracias por ser mi Princesita 😊","Mi Nenita 😊🥰",
+      "Mi Flaquita 🩷","Mi Blanquita 😍🥰","Mi Mundo 🥺","Gracias por amarme 🥰🥺",
+      "Gracias por ser mi mujer 🤭🥴","Mi Reina 🤗","Awwwwwww 🫠😊","Te Amooo 🩷😊",
+      "Mi Diosa Humana 🩷😳","Mi Cachaquita 🤭","Mi Enojona 😳","Te Amo 🩷",
+      "Tan Hermosa 🤭","La mejor mujer del mundo 🩷"
     ];
 
     const photos = [
-      '1.jpg',
-      '2.jpg',
-      '3.jpg',
-      '4.jpg',
-      '5.jpg', '6.jpg', '7.jpg', '9.jpg', '10.jpg', '11.jpg',
-      '13.jpg', '14.jpg', '15.jpg', '16.jpg', '17.jpg', '18.jpg', 
-      '19.jpg', '20.jpg','21.jpg', '22.jpg', '23.jpg', '24.jpg', '25.jpg'
+      '1.jpg','2.jpg','3.jpg','4.jpg','5.jpg','6.jpg','7.jpg',
+      '9.jpg','10.jpg','11.jpg','13.jpg','14.jpg','15.jpg',
+      '16.jpg','17.jpg','18.jpg','19.jpg','20.jpg',
+      '21.jpg','22.jpg','23.jpg','24.jpg','25.jpg'
     ];
 
     const contenedor = document.getElementById("contenedor-imagen");
+    const activePositions = [];
+    const PHOTO_SIZE = 80;
+    const MIN_DISTANCE = 100;
 
     function createPhrase() {
       const el = document.createElement("div");
       el.className = "phrase";
       el.innerText = phrases[Math.floor(Math.random() * phrases.length)];
 
-      const x = Math.random() * (contenedor.clientWidth - 100);
+      const x = Math.random() * (contenedor.clientWidth - 120);
       const y = Math.random() * (contenedor.clientHeight - 40);
       el.style.left = `${x}px`;
       el.style.top = `${y}px`;
 
-      el.style.color = ["gold", "deeppink", "aqua", "white", "violet"][Math.floor(Math.random() * 5)];
+      el.style.color = ["gold","deeppink","aqua","white","violet"]
+        [Math.floor(Math.random() * 5)];
 
       contenedor.appendChild(el);
       setTimeout(() => el.remove(), 4000);
@@ -181,22 +165,51 @@
     function createPhoto() {
       const img = document.createElement("img");
       img.className = "photo";
+
+      img.onload = () => {
+        let x, y, valid, attempts = 0;
+
+        do {
+          valid = true;
+          x = Math.random() * (contenedor.clientWidth - PHOTO_SIZE);
+          y = Math.random() * (contenedor.clientHeight - PHOTO_SIZE);
+
+          for (const pos of activePositions) {
+            const dx = pos.x - x;
+            const dy = pos.y - y;
+            if (Math.sqrt(dx * dx + dy * dy) < MIN_DISTANCE) {
+              valid = false;
+              break;
+            }
+          }
+          attempts++;
+        } while (!valid && attempts < 10);
+
+        img.style.left = `${x}px`;
+        img.style.top = `${y}px`;
+
+        activePositions.push({ x, y });
+        contenedor.appendChild(img);
+
+        setTimeout(() => {
+          img.remove();
+          const i = activePositions.findIndex(p => p.x === x && p.y === y);
+          if (i !== -1) activePositions.splice(i, 1);
+        }, 4000);
+      };
+
       img.src = photos[Math.floor(Math.random() * photos.length)];
+    }
 
-      const x = Math.random() * (contenedor.clientWidth - 80);
-      const y = Math.random() * (contenedor.clientHeight - 80);
-      img.style.left = `${x}px`;
-      img.style.top = `${y}px`;
-
-      contenedor.appendChild(img);
-      setTimeout(() => img.remove(), 4000);
+    function createMultiplePhotos(count = 3) {
+      for (let i = 0; i < count; i++) createPhoto();
     }
 
     document.getElementById("btn-yoo").onclick = () => {
       document.getElementById("pantalla-inicial").style.display = "none";
       document.getElementById("musica").play();
       setInterval(createPhrase, 1000);
-      setInterval(createPhoto, 2500);
+      setInterval(() => createMultiplePhotos(3), 2200);
     };
   </script>
 </body>
