@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -45,7 +46,7 @@
       color: gold;
       text-shadow: 1px 1px 3px black;
       transform: scale(0);
-      animation: popOut 4.5s ease-out forwards;
+      animation: popOutText 6s ease-out forwards;
       pointer-events: none;
       z-index: 2;
     }
@@ -58,14 +59,19 @@
       object-fit: cover;
       box-shadow: 0 0 8px white;
       transform: scale(0);
-      animation: popOut 5.5s ease-out forwards;
       pointer-events: none;
       z-index: 3;
     }
 
-    @keyframes popOut {
-      0% { opacity: 0; transform: scale(0); }
-      50% { opacity: 1; transform: scale(1.1); }
+    @keyframes popOutPhoto {
+      0%   { opacity: 0; transform: scale(0); }
+      40%  { opacity: 1; transform: scale(1.05); }
+      100% { opacity: 0; transform: scale(1.6); }
+    }
+
+    @keyframes popOutText {
+      0%   { opacity: 0; transform: scale(0); }
+      40%  { opacity: 1; transform: scale(1.1); }
       100% { opacity: 0; transform: scale(1.8); }
     }
 
@@ -125,42 +131,41 @@
     const phrases = [
       "Para ti mi Niña Hermosa🩷","Te Amo 🩷","Mi Preciosa 😍😳","Mi Flaca 🩷",
       "Me Encantas Muchote 😍","Mi Niña 🩷","Amor de mi Vida 💘🥰","Te Amo Muchote 🩷",
-      "Mi Princesita 😘😏","Te Amoooooo🩷","Gracias por ser mi Princesita 😊","Mi Nenita 😊🥰",
-      "Mi Flaquita 🩷","Mi Blanquita 😍🥰","Mi Mundo 🥺","Gracias por amarme 🥰🥺",
-      "Gracias por ser mi mujer 🤭🥴","Mi Reina 🤗","Awwwwwww 🫠😊","Te Amooo 🩷😊",
-      "Mi Diosa Humana 🩷😳","Mi Cachaquita 🤭","Mi Enojona 😳","Te Amo 🩷",
-      "Tan Hermosa 🤭","La mejor mujer del mundo 🩷"
+      "Mi Princesita 😘😏","Te Amoooooo🩷","Gracias por ser mi Princesita 😊",
+      "Mi Nenita 😊🥰","Mi Flaquita 🩷","Mi Blanquita 😍🥰","Mi Mundo 🥺",
+      "Gracias por amarme 🥰🥺","Gracias por ser mi mujer 🤭🥴","Mi Reina 🤗",
+      "Awwwwwww 🫠😊","Te Amooo 🩷😊","Mi Diosa Humana 🩷😳","Mi Cachaquita 🤭",
+      "Mi Enojona 😳","Te Amo 🩷","Tan Hermosa 🤭","La mejor mujer del mundo 🩷"
     ];
 
     const photos = [
-      '1.jpg',
-      '2.jpg',
-      '3.jpg',
-      '4.jpg',
-      '5.jpg', '6.jpg', '7.jpg', '8.jpg', '9.jpg', '10.jpg', '11.jpg',
-      '12.jpg','13.jpg', '14.jpg', '15.jpg', '16.jpg', '17.jpg', '18.jpg', 
-      '19.jpg', '20.jpg','21.jpg', '22.jpg', '23.jpg', '24.jpg', '25.jpg'
+      '1.jpg','2.jpg','3.jpg','4.jpg','5.jpg','6.jpg','7.jpg','8.jpg',
+      '9.jpg','10.jpg','11.jpg','12.jpg','13.jpg','14.jpg','15.jpg',
+      '16.jpg','17.jpg','18.jpg','19.jpg','20.jpg','21.jpg','22.jpg',
+      '23.jpg','24.jpg','25.jpg'
     ];
 
     const contenedor = document.getElementById("contenedor-imagen");
     const PHOTO_SIZE = 80;
-    const MIN_DISTANCE = 100;
-    const MAX_PHOTOS = 10;
+    const MIN_DISTANCE = 110;
+    const MIN_PHOTOS = 3;
+    const MAX_PHOTOS = 4;
     const activePhotos = [];
+
+    function randomBetween(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
 
     function createPhrase() {
       const el = document.createElement("div");
       el.className = "phrase";
       el.innerText = phrases[Math.floor(Math.random() * phrases.length)];
-
       el.style.left = Math.random() * (contenedor.clientWidth - 120) + "px";
       el.style.top = Math.random() * (contenedor.clientHeight - 40) + "px";
-
       el.style.color = ["gold","deeppink","aqua","white","violet"]
         [Math.floor(Math.random() * 5)];
-
       contenedor.appendChild(el);
-      setTimeout(() => el.remove(), 4500);
+      setTimeout(() => el.remove(), 6000);
     }
 
     function createPhoto() {
@@ -169,8 +174,11 @@
       const img = document.createElement("img");
       img.className = "photo";
 
+      const lifeTime = randomBetween(6500, 9500);
+      img.style.animation = `popOutPhoto ${lifeTime}ms ease-out forwards`;
+
       img.onload = () => {
-        let x, y, valid, attempts = 0;
+        let x, y, valid, tries = 0;
 
         do {
           valid = true;
@@ -180,17 +188,16 @@
           for (const p of activePhotos) {
             const dx = p.x - x;
             const dy = p.y - y;
-            if (Math.sqrt(dx * dx + dy * dy) < MIN_DISTANCE) {
+            if (Math.sqrt(dx*dx + dy*dy) < MIN_DISTANCE) {
               valid = false;
               break;
             }
           }
-          attempts++;
-        } while (!valid && attempts < 10);
+          tries++;
+        } while (!valid && tries < 10);
 
         img.style.left = x + "px";
         img.style.top = y + "px";
-
         contenedor.appendChild(img);
         activePhotos.push({ img, x, y });
 
@@ -198,7 +205,7 @@
           img.remove();
           const i = activePhotos.findIndex(p => p.img === img);
           if (i !== -1) activePhotos.splice(i, 1);
-        }, 5500);
+        }, lifeTime);
       };
 
       img.src = photos[Math.floor(Math.random() * photos.length)];
@@ -208,10 +215,14 @@
       document.getElementById("pantalla-inicial").style.display = "none";
       document.getElementById("musica").play();
 
-      setInterval(createPhrase, 1100);
-      setInterval(createPhoto, 850);
+      setInterval(createPhrase, 1300);
+
+      setInterval(() => {
+        if (activePhotos.length < MIN_PHOTOS) createPhoto();
+      }, 900);
+
+      setInterval(createPhoto, 1800);
     };
   </script>
 </body>
 </html>
-
