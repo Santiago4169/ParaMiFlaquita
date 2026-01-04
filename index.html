@@ -49,6 +49,7 @@
       animation: popOutText 6s ease-out forwards;
       pointer-events: none;
       z-index: 2;
+      will-change: transform, opacity;
     }
 
     .photo {
@@ -59,8 +60,10 @@
       object-fit: cover;
       box-shadow: 0 0 8px white;
       transform: scale(0);
+      opacity: 0;
       pointer-events: none;
       z-index: 3;
+      will-change: transform, opacity;
     }
 
     @keyframes popOutPhoto {
@@ -174,7 +177,7 @@
       const img = document.createElement("img");
       img.className = "photo";
 
-      const lifeTime = randomBetween(6500, 9500);
+      const lifeTime = randomBetween(7000, 10000);
       img.style.animation = `popOutPhoto ${lifeTime}ms ease-out forwards`;
 
       img.onload = () => {
@@ -198,6 +201,8 @@
 
         img.style.left = x + "px";
         img.style.top = y + "px";
+        img.style.opacity = "1";
+
         contenedor.appendChild(img);
         activePhotos.push({ img, x, y });
 
@@ -215,13 +220,13 @@
       document.getElementById("pantalla-inicial").style.display = "none";
       document.getElementById("musica").play();
 
-      setInterval(createPhrase, 1300);
+      setInterval(createPhrase, 1400);
 
       setInterval(() => {
         if (activePhotos.length < MIN_PHOTOS) createPhoto();
-      }, 900);
+      }, 1200);
 
-      setInterval(createPhoto, 1800);
+      setInterval(createPhoto, 2400);
     };
   </script>
 </body>
